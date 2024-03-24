@@ -3,9 +3,8 @@ const mustacheExpress = require("mustache-express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
-const config = require("./config/config");
+const config = require("../config/config");
 const todoRoutes = require("./routers/todoRoutes");
-const fs = require("fs");
 
 dotenv.config();
 
@@ -19,17 +18,14 @@ app.use(bodyParser.json());
 // Set up Mustache as template engine
 app.engine("mustache", mustacheExpress());
 app.set("view engine", "mustache");
-app.set("views", __dirname + "/views");
+app.set("views", "../views");
 app.set("view cache", false); // Disable template caching
 
 // Connect to MongoDB
 mongoose
-  .connect(config.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((error) => console.error("MongoDB connection error:", error));
+  .connect("mongodb://localhost:27017/mybase")
+  .then(() => console.log("MongoDB'ye bağlandı"))
+  .catch((err) => console.error("MongoDB bağlantı hatası:", err));
 
 // Routes
 app.use("/todos", todoRoutes);
@@ -42,30 +38,23 @@ app.use((err, req, res, next) => {
 
 // Define routes for different pages
 app.get("/", (req, res) => {
-  res.render("layout", {
+  res.render("home", {
     title: "Home",
-    partials: { content: "partials/home" },
+    partials: { content: "home" },
   });
 });
 
 app.get("/about", (req, res) => {
-  res.render("layout", {
+  res.render("about", {
     title: "About",
-    partials: { content: "partials/about" },
+    partials: { content: "about" },
   });
 });
 
 app.get("/contact", (req, res) => {
-  fs.readFile("views/contact.mustache", "utf8", (err, data) => {
-    if (err) {
-      console.error("Error reading contact partial:", err);
-      return res.status(500).send("Internal Server Error");
-    }
-
-    res.render("layout", {
-      title: "Contact",
-      mainPartial: data, // Pass the content of the contact partial directly
-    });
+  res.render("contact", {
+    title: "Contact",
+    mainPartial: "contact", // Pass the content of the contact partial directly
   });
 });
 
