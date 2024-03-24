@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const config = require("../config/config");
 const todoRoutes = require("./routers/todoRoutes");
+const todoController = require("./controllers/todoController");
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ app.set("view cache", false); // Disable template caching
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/mybase")
+  .connect("mongodb://127.0.0.1:27017/mybase")
   .then(() => console.log("MongoDB'ye bağlandı"))
   .catch((err) => console.error("MongoDB bağlantı hatası:", err));
 
